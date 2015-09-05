@@ -47,7 +47,6 @@ rec {
     export NIX_DONT_SET_RPATH=1
     export NIX_NO_SELF_RPATH=1
     dontFixLibtool=1
-    findExecutablesFlags="-perm +0100" # the Darwin find does not support /0100
     stripAllFlags=" " # the Darwin "strip" command doesn't know "-s"
     xargsFlags=" "
     export MACOSX_DEPLOYMENT_TARGET=10.7
@@ -74,6 +73,9 @@ rec {
       initialPath = stage0.stdenv.initialPath ++ [ nativePrefix ];
 
       preHook = preHook + "\n" + ''
+        # The Darwin find does not support /0100, from stage3 on we have our
+        # find from findutils which will not support +0100 in the future.
+        findExecutablesFlags="-perm +0100"
         export NIX_LDFLAGS_AFTER+=" -L/usr/lib"
         export NIX_ENFORCE_PURITY=
         export NIX_CFLAGS_COMPILE+=" -isystem ${nativePrefix}/include/c++/v1 -stdlib=libc++"
