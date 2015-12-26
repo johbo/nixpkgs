@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, curl, dmd, gcc }:
+{ stdenv, fetchFromGitHub, curl, dmd }:
 
 let version = "0.9.24"; in
 stdenv.mkDerivation {
@@ -12,7 +12,7 @@ stdenv.mkDerivation {
   };
 
   buildInputs = [ curl ];
-  propagatedBuildInputs = [ gcc dmd ];
+  propagatedBuildInputs = [ dmd ];
 
   buildPhase = ''
       # Avoid that the version file is overwritten
@@ -35,4 +35,3 @@ stdenv.mkDerivation {
     platforms = platforms.unix;
   };
 }
-
