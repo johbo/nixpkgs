@@ -5,12 +5,12 @@ let
 in
 
 stdenv.mkDerivation rec {
-  version = "2.069.1";
+  version = "2.069.2";
   name = "dmd-${version}";
 
   src = fetchurl {
     url = "http://downloads.dlang.org/releases/2015/dmd.${version}.zip";
-    sha256 = "1g1sff6zp8cnzrlffwjfh0ff2y2ijhd558nz5fhbwwffrjgz4wwc";
+    sha256 = "1k3qh27wfg2x54jqvcv6f5rcnp0d5mjd6n4p1hmazxy9amap9bza";
   };
 
   buildInputs = [ unzip curl which tzdata makeWrapper ];
