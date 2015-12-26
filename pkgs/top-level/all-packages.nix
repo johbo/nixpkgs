@@ -1236,6 +1236,8 @@ let
 
   dbench = callPackage ../development/tools/misc/dbench { };
 
+  dcd = callPackage ../development/tools/d/dcd { };
+
   dclxvi = callPackage ../development/libraries/dclxvi { };
 
   dcraw = callPackage ../tools/graphics/dcraw { };
