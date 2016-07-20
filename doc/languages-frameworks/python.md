@@ -439,7 +439,7 @@ All packages depending on any Python interpreter get appended
 `out/{python.sitePackages}` to `$PYTHONPATH` if such directory
 exists.
 
-#### Attributes on interpreters packages
+#### Attributes on interpreter packages
 
 Each interpreter has the following attributes:
 
