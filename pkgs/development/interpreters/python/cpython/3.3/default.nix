@@ -98,7 +98,7 @@ in stdenv.mkDerivation {
     done
 
     # FIXME: should regenerate this.
-    rm $out/lib/python${majorVersion}/__pycache__/_sysconfigdata.cpython*
+    rm -f $out/lib/python${majorVersion}/__pycache__/_sysconfigdata.cpython*
 
   '';
 
