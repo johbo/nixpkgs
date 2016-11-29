@@ -60,10 +60,10 @@ stdenv.mkDerivation rec {
 
   configureFlags = if stdenv.isDarwin then [
     "--disable-dependency-tracking"
-    "--enable-quartz"
-    "--enable-quartz-font"
-    "--enable-quartz-image"
-    "--enable-ft"
+    "--enable-quartz-yes"
+    "--enable-quartz-font=yes"
+    "--enable-quartz-image=yes"
+    "--enable-ft=yes"
   ] else ([ "--enable-tee" ]
     ++ optional xcbSupport "--enable-xcb"
     ++ optional glSupport "--enable-gl"
@@ -85,6 +85,8 @@ stdenv.mkDerivation rec {
     # `-I' flags to be propagated.
     sed -i "src/cairo.pc.in" \
         -es'|^Cflags:\(.*\)$|Cflags: \1 -I${freetype.dev}/include/freetype2 -I${freetype.dev}/include|g'
+
+    export NIX_CFLAGS_COMPILE="-F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
     '';
 
   enableParallelBuilding = true;

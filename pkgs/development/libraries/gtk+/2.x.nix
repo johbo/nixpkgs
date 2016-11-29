@@ -2,6 +2,7 @@
 , gdk_pixbuf, libintlOrEmpty, xlibsWrapper
 , xineramaSupport ? stdenv.isLinux
 , cupsSupport ? true, cups ? null
+, darwin
 }:
 
 assert xineramaSupport -> xorg.libXinerama != null;
@@ -33,13 +34,16 @@ stdenv.mkDerivation rec {
     ++ optionals (stdenv.isLinux || stdenv.isDarwin) [
          libXrandr libXrender libXcomposite libXi libXcursor
        ]
-    ++ optionals stdenv.isDarwin [ xlibsWrapper libXdamage ]
+    ++ optionals stdenv.isDarwin [ xlibsWrapper libXdamage
+      darwin.apple_sdk.frameworks.AppKit
+      darwin.apple_sdk.frameworks.Cocoa
+    ]
     ++ libintlOrEmpty
     ++ optional xineramaSupport libXinerama
     ++ optionals cupsSupport [ cups ];
 
   configureFlags = if stdenv.isDarwin
-    then "--disable-glibtest --disable-introspection --disable-visibility"
+    then "--disable-glibtest --disable-introspection --disable-visibility --with-gdktarget=quartz"
     else "--with-xinput=yes";
 
   postInstall = ''

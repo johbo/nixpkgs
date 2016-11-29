@@ -1,9 +1,9 @@
 { stdenv, fetchurl, python, pkgconfig, gtk2, pygobject2, pycairo
-, buildPythonPackage, libglade ? null, isPy3k }:
+, buildPythonPackage, libglade ? null, isPy3k, darwin }:
 
 buildPythonPackage rec {
   name = "pygtk-2.24.0";
-  
+
   disabled = isPy3k;
 
   src = fetchurl {
@@ -14,9 +14,18 @@ buildPythonPackage rec {
   buildInputs = [ pkgconfig ]
     ++ stdenv.lib.optional (libglade != null) libglade;
 
-  propagatedBuildInputs = [ gtk2 pygobject2 pycairo ];
+  propagatedBuildInputs = [ gtk2 pygobject2 pycairo ] ++ stdenv.lib.optionals stdenv.isDarwin [
+    darwin.cf-private
+    darwin.apple_sdk.frameworks.AppKit
+    darwin.apple_sdk.frameworks.CoreText
+    darwin.apple_sdk.frameworks.Quartz
+  ];
 
   configurePhase = "configurePhase";
+
+  preBuild = ''
+    export NIX_CFLAGS_COMPILE=" -ObjC -F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
+  '';
 
   buildPhase = "buildPhase";
 
