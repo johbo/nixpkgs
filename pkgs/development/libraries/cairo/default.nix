@@ -53,7 +53,7 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs =
     # with xorg; [ libXext fontconfig expat freetype pixman zlib libpng libXrender ]
-    [libpng freetype pixman expat zlib]
+    [libpng freetype fontconfig pixman expat zlib]
     # ++ optionals xcbSupport [ libxcb xcbutil ]
     ++ optional gobjectSupport glib
     ++ optional glSupport mesa_noglu
