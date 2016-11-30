@@ -52,8 +52,9 @@ stdenv.mkDerivation rec {
   ]);
 
   propagatedBuildInputs =
-    with xorg; [ libXext fontconfig expat freetype pixman zlib libpng libXrender ]
-    ++ optionals xcbSupport [ libxcb xcbutil ]
+    # with xorg; [ libXext fontconfig expat freetype pixman zlib libpng libXrender ]
+    [libpng freetype pixman expat zlib]
+    # ++ optionals xcbSupport [ libxcb xcbutil ]
     ++ optional gobjectSupport glib
     ++ optional glSupport mesa_noglu
     ; # TODO: maybe liblzo but what would it be for here?
@@ -64,6 +65,8 @@ stdenv.mkDerivation rec {
     "--enable-quartz-font=yes"
     "--enable-quartz-image=yes"
     "--enable-ft=yes"
+    "--enable-xlib=no"
+    "--enable-fc=yes"
   ] else ([ "--enable-tee" ]
     ++ optional xcbSupport "--enable-xcb"
     ++ optional glSupport "--enable-gl"
