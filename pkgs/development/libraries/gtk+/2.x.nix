@@ -32,14 +32,15 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = with xorg; with stdenv.lib;
     [ glib cairo pango gdk_pixbuf atk ]
     ++ optionals (stdenv.isLinux || stdenv.isDarwin) [
-         libXrandr libXrender libXcomposite libXi libXcursor
+         # libXrandr libXrender libXcomposite libXi libXcursor
        ]
-    ++ optionals stdenv.isDarwin [ xlibsWrapper libXdamage
+    ++ optionals stdenv.isDarwin [
+      # xlibsWrapper libXdamage
       darwin.apple_sdk.frameworks.AppKit
       darwin.apple_sdk.frameworks.Cocoa
     ]
     ++ libintlOrEmpty
-    ++ optional xineramaSupport libXinerama
+    # ++ optional xineramaSupport libXinerama
     ++ optionals cupsSupport [ cups ];
 
   configureFlags = if stdenv.isDarwin
