@@ -1,4 +1,5 @@
 { stdenv, fetchurl, fetchFromGitHub, pkgconfig, which, zlib, bzip2, libpng, gnumake
+, darwin
 , glib /* passthru only */
 
   # FreeType supports sub-pixel rendering.  This is patented by
@@ -57,9 +58,18 @@ stdenv.mkDerivation rec {
   # dependence on harfbuzz is looser than the reverse dependence
   nativeBuildInputs = [ pkgconfig which ]
     # FreeType requires GNU Make, which is not part of stdenv on FreeBSD.
-    ++ optional (!stdenv.isLinux) gnumake;
+    ++ optional (!stdenv.isLinux) gnumake
+    ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
+      # CoreGraphics
+      ApplicationServices
+      Carbon
+    ]);
 
   configureFlags = [ "--disable-static" "--bindir=$(dev)/bin" ];
+
+  preConfigure = ''
+    export NIX_CFLAGS_COMPILE="-F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
+  '';
 
   # The asm for armel is written with the 'asm' keyword.
   CFLAGS = optionalString stdenv.isArm "-std=gnu99";
