@@ -60,16 +60,11 @@ stdenv.mkDerivation rec {
     # FreeType requires GNU Make, which is not part of stdenv on FreeBSD.
     ++ optional (!stdenv.isLinux) gnumake
     ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-      # CoreGraphics
       ApplicationServices
       Carbon
     ]);
 
   configureFlags = [ "--disable-static" "--bindir=$(dev)/bin" ];
-
-  preConfigure = ''
-    export NIX_CFLAGS_COMPILE="-F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
-  '';
 
   # The asm for armel is written with the 'asm' keyword.
   CFLAGS = optionalString stdenv.isArm "-std=gnu99";
