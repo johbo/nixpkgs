@@ -1,5 +1,4 @@
 { stdenv, fetchurl, fetchFromGitHub, pkgconfig, which, zlib, bzip2, libpng, gnumake
-, darwin
 , glib /* passthru only */
 
   # FreeType supports sub-pixel rendering.  This is patented by
@@ -58,11 +57,7 @@ stdenv.mkDerivation rec {
   # dependence on harfbuzz is looser than the reverse dependence
   nativeBuildInputs = [ pkgconfig which ]
     # FreeType requires GNU Make, which is not part of stdenv on FreeBSD.
-    ++ optional (!stdenv.isLinux) gnumake
-    ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-      ApplicationServices
-      Carbon
-    ]);
+    ++ optional (!stdenv.isLinux) gnumake;
 
   configureFlags = [ "--disable-static" "--bindir=$(dev)/bin" ];
 
