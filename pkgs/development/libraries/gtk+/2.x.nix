@@ -44,7 +44,7 @@ stdenv.mkDerivation rec {
     ++ optionals cupsSupport [ cups ];
 
   configureFlags = if stdenv.isDarwin
-    then "--disable-glibtest --disable-introspection --disable-visibility --with-gdktarget=quartz --enable-quartz-backend"
+    then "--disable-glibtest --disable-introspection --disable-visibility --with-gdktarget=quartz"
     else "--with-xinput=yes";
 
   postInstall = ''
