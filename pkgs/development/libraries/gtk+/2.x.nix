@@ -2,7 +2,8 @@
 , gdk_pixbuf, libintlOrEmpty, xlibsWrapper
 , xineramaSupport ? stdenv.isLinux
 , cupsSupport ? true, cups ? null
-, darwin
+, gdktarget ? "x11"
+, AppKit, Cocoa
 }:
 
 assert xineramaSupport -> xorg.libXinerama != null;
@@ -23,7 +24,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-  NIX_CFLAGS_COMPILE = stdenv.lib.optionalString (libintlOrEmpty != []) "-lintl";
+  NIX_CFLAGS_COMPILE = optionalString (libintlOrEmpty != []) "-lintl";
 
   setupHook = ./setup-hook.sh;
 
@@ -31,21 +32,24 @@ stdenv.mkDerivation rec {
 
   patches = [ ./2.0-immodules.cache.patch ];
 
-  propagatedBuildInputs = with xorg; with stdenv.lib;
+  propagatedBuildInputs = with xorg;
     [ glib cairo pango gdk_pixbuf atk ]
-    ++ optionals (stdenv.isLinux) [
+    ++ optionals (stdenv.isLinux || stdenv.isDarwin) [
          libXrandr libXrender libXcomposite libXi libXcursor
        ]
-    ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-      AppKit Cocoa
-    ])
+    ++ optionals stdenv.isDarwin [ xlibsWrapper libXdamage ]
     ++ libintlOrEmpty
-    # ++ optional xineramaSupport libXinerama
-    ++ optionals cupsSupport [ cups ];
+    ++ optional xineramaSupport libXinerama
+    ++ optionals cupsSupport [ cups ]
+    ++ optionals (gdktarget == "quartz") [ AppKit Cocoa ];
 
-  configureFlags = if stdenv.isDarwin
-    then "--disable-glibtest --disable-introspection --disable-visibility --with-gdktarget=quartz"
-    else "--with-xinput=yes";
+  configureFlags = [
+    "--with-gdktarget=${gdktarget}"
+  ] ++ optionals stdenv.isDarwin [
+    "--disable-glibtest"
+    "--disable-introspection"
+    "--disable-visibility"
+  ] ++ optional (!stdenv.isDarwin) "--with-xinput=yes";
 
   postInstall = ''
     moveToOutput share/gtk-2.0/demo "$devdoc"
@@ -58,9 +62,10 @@ stdenv.mkDerivation rec {
       rm $out/lib/gtk-2.0/2.10.0/immodules.cache
       $out/bin/gtk-query-immodules-2.0 $out/lib/gtk-2.0/2.10.0/immodules/*.so > $out/lib/gtk-2.0/2.10.0/immodules.cache
     ''; # workaround for bug of nix-mode for Emacs */ '';
+    inherit gdktarget;
   };
 
-  meta = with stdenv.lib; {
+  meta = {
     description = "A multi-platform toolkit for creating graphical user interfaces";
     homepage    = http://www.gtk.org/;
     license     = licenses.lgpl2Plus;
