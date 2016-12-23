@@ -53,21 +53,18 @@ stdenv.mkDerivation rec {
   ]);
 
   propagatedBuildInputs =
-    # with xorg; [ libXext fontconfig expat freetype pixman zlib libpng libXrender ]
-    [libpng freetype fontconfig pixman expat zlib]
-    # ++ optionals xcbSupport [ libxcb xcbutil ]
+    with xorg; [ libXext fontconfig expat freetype pixman zlib libpng libXrender ]
+    ++ optionals xcbSupport [ libxcb xcbutil ]
     ++ optional gobjectSupport glib
     ++ optional glSupport mesa_noglu
     ; # TODO: maybe liblzo but what would it be for here?
 
   configureFlags = if stdenv.isDarwin then [
     "--disable-dependency-tracking"
-    "--enable-quartz-yes"
-    "--enable-quartz-font=yes"
-    "--enable-quartz-image=yes"
-    "--enable-ft=yes"
-    "--enable-xlib=no"
-    "--enable-fc=yes"
+    "--enable-quartz"
+    "--enable-quartz-font"
+    "--enable-quartz-image"
+    "--enable-ft"
   ] else ([ "--enable-tee" ]
     ++ optional xcbSupport "--enable-xcb"
     ++ optional glSupport "--enable-gl"
@@ -89,8 +86,6 @@ stdenv.mkDerivation rec {
     # `-I' flags to be propagated.
     sed -i "src/cairo.pc.in" \
         -es'|^Cflags:\(.*\)$|Cflags: \1 -I${freetype.dev}/include/freetype2 -I${freetype.dev}/include|g'
-
-    export NIX_CFLAGS_COMPILE="-F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
     '';
 
   enableParallelBuilding = true;
