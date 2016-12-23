@@ -32,7 +32,7 @@ with frameworks; with libs; {
   CoreMIDIServer          = [];
   CoreMedia               = [ ApplicationServices AudioToolbox CoreAudio CF CoreGraphics CoreVideo ];
   CoreMediaIO             = [ CF CoreMedia ];
-  CoreText                = [ CoreGraphics cf-private CF ];
+  CoreText                = [ CF CoreGraphics cf-private ];
   CoreVideo               = [ ApplicationServices CF CoreGraphics IOSurface OpenGL ];
   CoreWLAN                = [ SecurityFoundation ];
   DVComponentGlue         = [ CoreServices QuickTime ];
