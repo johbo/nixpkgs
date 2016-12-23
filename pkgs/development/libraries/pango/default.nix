@@ -1,6 +1,5 @@
-{ stdenv, fetchurl, pkgconfig, xlibsWrapper, glib, cairo, libpng, harfbuzz
-, fontconfig, freetype, libintlOrEmpty, gobjectIntrospection
-, darwin
+{ stdenv, fetchurl, pkgconfig, libXft, cairo, harfbuzz
+, libintlOrEmpty, gobjectIntrospection, darwin
 }:
 
 with stdenv.lib;
@@ -17,15 +16,16 @@ stdenv.mkDerivation rec {
     sha256 = "abba8b5ce728520c3a0f1535eab19eac3c14aeef7faa5aded90017ceac2711d3";
   };
 
-  buildInputs = with stdenv.lib; [ gobjectIntrospection ];
-  nativeBuildInputs = [ pkgconfig ];
+  outputs = [ "bin" "dev" "out" "devdoc" ];
 
-  propagatedBuildInputs = [ glib cairo libpng freetype harfbuzz ] ++ libintlOrEmpty
+  buildInputs = [ gobjectIntrospection ];
+  nativeBuildInputs = [ pkgconfig ]
     ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
        Carbon
        CoreGraphics
        CoreText
     ]);
+  propagatedBuildInputs = [ cairo harfbuzz libXft ] ++ libintlOrEmpty;
 
   enableParallelBuilding = true;
 
@@ -36,7 +36,7 @@ stdenv.mkDerivation rec {
   # .../bin/sh: line 5: 14823 Abort trap: 6 srcdir=. PANGO_RC_FILE=./pangorc ${dir}$tst
   # FAIL: testiter
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  configureFlags = optional stdenv.isDarwin "--without-x";
 
   meta = with stdenv.lib; {
     description = "A library for laying out and rendering of text, with an emphasis on internationalization";
