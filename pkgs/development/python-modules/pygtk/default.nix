@@ -14,20 +14,21 @@ buildPythonPackage rec {
   buildInputs = [ pkgconfig ]
     ++ stdenv.lib.optional (libglade != null) libglade;
 
-  propagatedBuildInputs = [ gtk2 pygobject2 pycairo ] ++ stdenv.lib.optionals stdenv.isDarwin [
-    darwin.cf-private
-    darwin.apple_sdk.frameworks.AppKit
-    darwin.apple_sdk.frameworks.CoreText
-    darwin.apple_sdk.frameworks.Quartz
-  ];
+  propagatedBuildInputs = [ gtk2 pygobject2 pycairo ]
+    ++ stdenv.lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
+      darwin.cf-private
+      AppKit
+      CoreText
+      Quartz
+    ]);
 
   configurePhase = "configurePhase";
+
+  buildPhase = "buildPhase";
 
   preBuild = ''
     export NIX_CFLAGS_COMPILE=" -ObjC -F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
   '';
-
-  buildPhase = "buildPhase";
 
   installPhase = "installPhase";
 
