@@ -1,5 +1,5 @@
 { stdenv, fetchurl, python, pkgconfig, gtk2, pygobject2, pycairo
-, buildPythonPackage, libglade ? null, isPy3k, darwin }:
+, buildPythonPackage, libglade ? null, isPy3k }:
 
 buildPythonPackage rec {
   name = "pygtk-2.24.0";
@@ -20,9 +20,7 @@ buildPythonPackage rec {
 
   buildPhase = "buildPhase";
 
-  preBuild = ''
-    export NIX_CFLAGS_COMPILE=" -ObjC -F${darwin.cf-private}/Library/Frameworks $NIX_CFLAGS_COMPILE"
-  '';
+  NIX_CFLAGS_COMPILE = stdenv.lib.optionalString stdenv.isDarwin "-ObjC";
 
   installPhase = "installPhase";
 
