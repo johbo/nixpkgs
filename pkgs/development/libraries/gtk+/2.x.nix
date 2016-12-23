@@ -8,6 +8,8 @@
 assert xineramaSupport -> xorg.libXinerama != null;
 assert cupsSupport -> cups != null;
 
+with stdenv.lib;
+
 stdenv.mkDerivation rec {
   name = "gtk+-2.24.31";
 
@@ -31,20 +33,18 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs = with xorg; with stdenv.lib;
     [ glib cairo pango gdk_pixbuf atk ]
-    ++ optionals (stdenv.isLinux || stdenv.isDarwin) [
-         # libXrandr libXrender libXcomposite libXi libXcursor
+    ++ optionals (stdenv.isLinux) [
+         libXrandr libXrender libXcomposite libXi libXcursor
        ]
-    ++ optionals stdenv.isDarwin [
-      # xlibsWrapper libXdamage
-      darwin.apple_sdk.frameworks.AppKit
-      darwin.apple_sdk.frameworks.Cocoa
-    ]
+    ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
+      AppKit Cocoa
+    ])
     ++ libintlOrEmpty
     # ++ optional xineramaSupport libXinerama
     ++ optionals cupsSupport [ cups ];
 
   configureFlags = if stdenv.isDarwin
-    then "--disable-glibtest --disable-introspection --disable-visibility --with-gdktarget=quartz"
+    then "--disable-glibtest --disable-introspection --disable-visibility --with-gdktarget=quartz --enable-quartz-backend"
     else "--with-xinput=yes";
 
   postInstall = ''
