@@ -14,13 +14,7 @@ buildPythonPackage rec {
   buildInputs = [ pkgconfig ]
     ++ stdenv.lib.optional (libglade != null) libglade;
 
-  propagatedBuildInputs = [ gtk2 pygobject2 pycairo ]
-    ++ stdenv.lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-      darwin.cf-private
-      AppKit
-      CoreText
-      Quartz
-    ]);
+  propagatedBuildInputs = [ gtk2 pygobject2 pycairo ];
 
   configurePhase = "configurePhase";
 
