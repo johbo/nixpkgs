@@ -1,0 +1,49 @@
+From ab46e552e1d0dae73f72adac8d578e40bdadaf95 Mon Sep 17 00:00:00 2001
+From: Pierre Boutillier <pierre.boutillier@ens-lyon.org>
+Date: Tue, 6 Nov 2012 15:49:43 +0100
+Subject: [PATCH 2/2] Update to gtk-mac-integration 2.0 API
+
+Fixes bgo#687766. quartz_application_... becomes
+gtkosx_application_...
+
+https://bugzilla.gnome.org/show_bug.cgi?id=687766
+
+Conflicts:
+	tests/Makefile.am
+---
+ configure.ac                       | 2 +-
+ gtksourceview/gtksourceview-i18n.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 42fe313..489df98 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -76,7 +76,7 @@ AM_CONDITIONAL(OS_OSX, test "$os_osx" = "yes")
+ if test "$os_osx" = "yes"; then
+ 	AC_DEFINE([OS_OSX],[1],[Defined if os is Mac OSX])
+ 
+-	PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
++	PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration >= 2.0.0)
+ fi
+ 
+ # Check for Glade3
+diff --git a/gtksourceview/gtksourceview-i18n.c b/gtksourceview/gtksourceview-i18n.c
+index 32f8068..ee902e7 100644
+--- a/gtksourceview/gtksourceview-i18n.c
++++ b/gtksourceview/gtksourceview-i18n.c
+@@ -45,9 +45,9 @@ get_locale_dir (void)
+ 
+ 	g_free (win32_dir);
+ #elif defined (OS_OSX)
+-	if (quartz_application_get_bundle_id () != NULL)
++	if (gtkosx_application_get_bundle_id () != NULL)
+ 	{
+-		locale_dir = g_build_filename (quartz_application_get_resource_path (), "share", "locale", NULL);
++		locale_dir = g_build_filename (gtkosx_application_get_resource_path (), "share", "locale", NULL);
+ 	}
+ 	else
+ 	{
+-- 
+2.8.0
+
