@@ -27,13 +27,12 @@ in stdenv.mkDerivation rec {
     [ pkgconfig intltool babl gegl gtk2 glib gdk_pixbuf pango cairo
       freetype fontconfig lcms libpng libjpeg poppler libtiff webkit
       libmng librsvg libwmf zlib libzip ghostscript aalib jasper
-      python libart_lgpl libexif gettext xorg.libXpm
+      python pygtk libart_lgpl libexif gettext xorg.libXpm
       wrapPython
     ]
-    ++ stdenv.lib.optional (gtk2.gdktarget != "quartz") pygtk
     ++ stdenv.lib.optionals (gtk2.gdktarget == "quartz") [ gtk-mac-integration ];
 
-  pythonPath = [] ++ stdenv.lib.optional (gtk2.gdktarget != "quartz") pygtk;
+  pythonPath = [ pygtk ];
 
   postFixup = ''
     wrapPythonProgramsIn $out/lib/gimp/2.0/plug-ins/
@@ -43,8 +42,6 @@ in stdenv.mkDerivation rec {
   '';
 
   passthru = { gtk = gtk2; }; # probably its a good idea to use the same gtk in plugins ?
-
-  configureFlags = [] ++ stdenv.lib.optional (gtk2.gdktarget == "quartz") "--disable-python";
 
   enableParallelBuilding = true;
 
